@@ -3,7 +3,7 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
 import { UUID } from 'src/common/interfaces';
-import { Database } from 'src/database/database';
+import { Database } from 'src/database/database.provider';
 
 @Injectable()
 export class AlbumsService {
@@ -43,6 +43,13 @@ export class AlbumsService {
     const trackIndex = this.db.albums.findIndex((a) => a.id === id);
     if (trackIndex < 0) throw new NotFoundException('Album not found');
 
-    this.db.albums.splice(trackIndex, 1);
+    const [deletedAlbum] = this.db.albums.splice(trackIndex, 1);
+    this.removeReferences(deletedAlbum.id);
+  }
+
+  private removeReferences(albumId: UUID) {
+    this.db.tracks = this.db.tracks.map((t) =>
+      t.albumId === albumId ? { ...t, albumId: null } : t,
+    );
   }
 }

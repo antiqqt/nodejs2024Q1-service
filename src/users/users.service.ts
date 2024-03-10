@@ -9,7 +9,7 @@ import { UUID } from 'src/common/interfaces';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { getUserWithoutPassword } from './users.constants';
-import { Database } from 'src/database/database';
+import { Database } from 'src/database/database.provider';
 
 @Injectable()
 export class UsersService {

@@ -32,9 +32,7 @@ export class AlbumsService {
     if (!album) throw new NotFoundException('Album not found');
 
     const updatedAlbum = { ...album, ...updateAlbumDto };
-    this.db.albums = this.db.albums.map((a) =>
-      a.id === id ? updatedAlbum : a,
-    );
+    this.db.albums = this.db.albums.map((a) => (a.id === id ? updatedAlbum : a));
 
     return updatedAlbum;
   }

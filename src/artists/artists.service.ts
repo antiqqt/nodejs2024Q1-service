@@ -32,9 +32,7 @@ export class ArtistsService {
     if (!artist) throw new NotFoundException('Artist not found');
 
     const updatedArtist = { ...artist, ...updateArtistDto };
-    this.db.artists = this.db.artists.map((a) =>
-      a.id === id ? updatedArtist : a,
-    );
+    this.db.artists = this.db.artists.map((a) => (a.id === id ? updatedArtist : a));
 
     return updatedArtist;
   }

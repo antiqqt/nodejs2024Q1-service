@@ -51,8 +51,9 @@ describe('Refresh (e2e)', () => {
 
   beforeAll(async () => {
     if (shouldAuthorizationBeTested) {
-      const { accessToken, refreshToken, mockUserId, login, token } =
-        await getTokenAndUserId(request);
+      const { accessToken, refreshToken, mockUserId, login, token } = await getTokenAndUserId(
+        request,
+      );
       userTokens = { userId: mockUserId, login, accessToken, refreshToken };
       headers['Authorization'] = token;
     }
@@ -106,9 +107,7 @@ describe('Refresh (e2e)', () => {
         login: userTokens.login,
       };
       const refreshToken = generateRefreshToken(payload, { expiresIn: '0s' });
-      const response = await request
-        .post(authRoutes.refresh)
-        .send({ refreshToken });
+      const response = await request.post(authRoutes.refresh).send({ refreshToken });
       expect(response.statusCode).toBe(HttpStatus.FORBIDDEN);
     });
   });

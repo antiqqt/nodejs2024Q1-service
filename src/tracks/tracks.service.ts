@@ -32,9 +32,7 @@ export class TracksService {
     if (!track) throw new NotFoundException('Track not found');
 
     const updatedTrack = { ...track, ...updateTrackDto };
-    this.db.tracks = this.db.tracks.map((t) =>
-      t.id === id ? updatedTrack : t,
-    );
+    this.db.tracks = this.db.tracks.map((t) => (t.id === id ? updatedTrack : t));
 
     return updatedTrack;
   }

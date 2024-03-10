@@ -15,10 +15,7 @@ import { ZodValidationPipe } from 'src/validation/zod-validation-pipe';
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import {
-  createArtistSchema,
-  updateArtistSchema,
-} from './schema/artists.schema';
+import { createArtistSchema, updateArtistSchema } from './schema/artists.schema';
 
 @Controller('artist')
 export class ArtistsController {

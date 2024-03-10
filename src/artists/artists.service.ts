@@ -46,16 +46,14 @@ export class ArtistsService {
   }
 
   private removeReferences(artistId: UUID) {
-    console.log(this.db.tracks);
-
     this.db.tracks = this.db.tracks.map((t) =>
       t.artistId === artistId ? { ...t, artistId: null } : t,
     );
 
-    console.log(this.db.tracks);
-
     this.db.albums = this.db.albums.map((a) =>
       a.artistId === artistId ? { ...a, artistId: null } : a,
     );
+
+    if (this.db.favorites.artists.has(artistId)) this.db.favorites.artists.delete(artistId);
   }
 }

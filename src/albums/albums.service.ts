@@ -49,5 +49,7 @@ export class AlbumsService {
     this.db.tracks = this.db.tracks.map((t) =>
       t.albumId === albumId ? { ...t, albumId: null } : t,
     );
+
+    if (this.db.favorites.albums.has(albumId)) this.db.favorites.albums.delete(albumId);
   }
 }

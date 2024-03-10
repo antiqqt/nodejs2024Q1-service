@@ -3,17 +3,18 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
 import { UUID } from 'src/common/interfaces';
+import { Database } from 'src/database/database';
 
 @Injectable()
 export class AlbumsService {
-  albums: Album[] = [];
+  constructor(private readonly db: Database) {}
 
   findAll() {
-    return this.albums;
+    return this.db.albums;
   }
 
   findOne(id: UUID) {
-    const album = this.albums.find((a) => a.id === id);
+    const album = this.db.albums.find((a) => a.id === id);
     if (!album) throw new NotFoundException('Album not found');
 
     return album;
@@ -22,24 +23,26 @@ export class AlbumsService {
   create(createAlbumDto: CreateAlbumDto) {
     const album = new Album(createAlbumDto);
 
-    this.albums.push(album);
+    this.db.albums.push(album);
     return album;
   }
 
   update(id: UUID, updateAlbumDto: UpdateAlbumDto) {
-    const album = this.albums.find((a) => a.id === id);
+    const album = this.db.albums.find((a) => a.id === id);
     if (!album) throw new NotFoundException('Album not found');
 
     const updatedAlbum = { ...album, ...updateAlbumDto };
-    this.albums = this.albums.map((a) => (a.id === id ? updatedAlbum : a));
+    this.db.albums = this.db.albums.map((a) =>
+      a.id === id ? updatedAlbum : a,
+    );
 
     return updatedAlbum;
   }
 
   remove(id: UUID) {
-    const trackIndex = this.albums.findIndex((a) => a.id === id);
+    const trackIndex = this.db.albums.findIndex((a) => a.id === id);
     if (trackIndex < 0) throw new NotFoundException('Album not found');
 
-    this.albums.splice(trackIndex, 1);
+    this.db.albums.splice(trackIndex, 1);
   }
 }

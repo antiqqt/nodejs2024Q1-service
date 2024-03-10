@@ -3,17 +3,18 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
 import { UUID } from 'src/common/interfaces';
+import { Database } from 'src/database/database';
 
 @Injectable()
 export class TracksService {
-  tracks: Track[] = [];
+  constructor(private readonly db: Database) {}
 
   findAll() {
-    return this.tracks;
+    return this.db.tracks;
   }
 
   findOne(id: UUID) {
-    const track = this.tracks.find((t) => t.id === id);
+    const track = this.db.tracks.find((t) => t.id === id);
     if (!track) throw new NotFoundException('Track not found');
 
     return track;
@@ -22,24 +23,26 @@ export class TracksService {
   create(createTrackDto: CreateTrackDto) {
     const track = new Track(createTrackDto);
 
-    this.tracks.push(track);
+    this.db.tracks.push(track);
     return track;
   }
 
   update(id: UUID, updateTrackDto: UpdateTrackDto) {
-    const track = this.tracks.find((t) => t.id === id);
+    const track = this.db.tracks.find((t) => t.id === id);
     if (!track) throw new NotFoundException('Track not found');
 
     const updatedTrack = { ...track, ...updateTrackDto };
-    this.tracks = this.tracks.map((t) => (t.id === id ? updatedTrack : t));
+    this.db.tracks = this.db.tracks.map((t) =>
+      t.id === id ? updatedTrack : t,
+    );
 
     return updatedTrack;
   }
 
   remove(id: UUID) {
-    const trackIndex = this.tracks.findIndex((t) => t.id === id);
+    const trackIndex = this.db.tracks.findIndex((t) => t.id === id);
     if (trackIndex < 0) throw new NotFoundException('Track not found');
 
-    this.tracks.splice(trackIndex, 1);
+    this.db.tracks.splice(trackIndex, 1);
   }
 }

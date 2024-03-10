@@ -9,17 +9,18 @@ import { UUID } from 'src/common/interfaces';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { getUserWithoutPassword } from './users.constants';
+import { Database } from 'src/database/database';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [];
+  constructor(private readonly db: Database) {}
 
   findAll() {
-    return this.users.map(getUserWithoutPassword);
+    return this.db.users.map(getUserWithoutPassword);
   }
 
   findOne(id: UUID) {
-    const user = this.users.find((user) => user.id === id);
+    const user = this.db.users.find((user) => user.id === id);
     if (!user) throw new NotFoundException('User not found');
 
     return getUserWithoutPassword(user);
@@ -28,12 +29,12 @@ export class UsersService {
   create(dto: CreateUserDto) {
     const user = new User(dto);
 
-    this.users.push(user);
+    this.db.users.push(user);
     return getUserWithoutPassword(user);
   }
 
   update(id: UUID, dto: UpdatePasswordDto) {
-    const user = this.users.find((user) => user.id === id);
+    const user = this.db.users.find((user) => user.id === id);
     if (!user) throw new NotFoundException('User not found');
 
     const isOldPasswordValid = user.password === dto.oldPassword;
@@ -47,9 +48,9 @@ export class UsersService {
   }
 
   delete(id: UUID) {
-    const userIndex = this.users.findIndex((user) => user.id === id);
+    const userIndex = this.db.users.findIndex((user) => user.id === id);
     if (userIndex < 0) throw new NotFoundException('User not found');
 
-    this.users.splice(userIndex, 1);
+    this.db.users.splice(userIndex, 1);
   }
 }

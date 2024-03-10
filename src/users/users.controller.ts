@@ -37,10 +37,9 @@ export class UsersController {
   }
 
   @Put(':id')
-  @UsePipes(new ZodValidationPipe(updatePasswordSchema))
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() dto: UpdatePasswordDto,
+    @Body(new ZodValidationPipe(updatePasswordSchema)) dto: UpdatePasswordDto,
   ) {
     return this.usersService.update(id, dto);
   }

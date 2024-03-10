@@ -9,8 +9,7 @@ export const createUserSchema = z
 
 export const updatePasswordSchema = z
   .object({
-    id: z.string(),
     oldPassword: z.string(),
-    newPassword: z.number(),
+    newPassword: z.string(),
   })
   .required();

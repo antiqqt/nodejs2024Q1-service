@@ -8,27 +8,28 @@ import { User } from './entities/user.entity';
 import { UUID } from 'src/common/interfaces';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { getUserWithoutPassword } from './users.constants';
 
 @Injectable()
 export class UsersService {
   private users: User[] = [];
 
   findAll() {
-    return this.users;
+    return this.users.map(getUserWithoutPassword);
   }
 
   findOne(id: UUID) {
     const user = this.users.find((user) => user.id === id);
     if (!user) throw new NotFoundException('User not found');
 
-    return user;
+    return getUserWithoutPassword(user);
   }
 
   create(dto: CreateUserDto) {
     const user = new User(dto);
 
     this.users.push(user);
-    return user;
+    return getUserWithoutPassword(user);
   }
 
   update(id: UUID, dto: UpdatePasswordDto) {
@@ -42,7 +43,7 @@ export class UsersService {
     user.version += 1;
     user.updatedAt = Date.now();
 
-    return user;
+    return getUserWithoutPassword(user);
   }
 
   delete(id: UUID) {

@@ -16,6 +16,7 @@ import { createUserSchema, updatePasswordSchema } from './schema/user.schema';
 import { UsersService } from './users.service';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UUID } from 'crypto';
 
 @Controller('user')
 export class UsersController {
@@ -26,7 +27,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  getById(@Param('id', new ParseUUIDPipe()) id: string) {
+  getById(@Param('id', new ParseUUIDPipe()) id: UUID) {
     return this.usersService.findOne(id);
   }
 
@@ -38,7 +39,7 @@ export class UsersController {
 
   @Put(':id')
   update(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('id', new ParseUUIDPipe()) id: UUID,
     @Body(new ZodValidationPipe(updatePasswordSchema)) dto: UpdatePasswordDto,
   ) {
     return this.usersService.update(id, dto);
@@ -46,7 +47,7 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  delete(@Param('id', new ParseUUIDPipe()) id: string) {
+  delete(@Param('id', new ParseUUIDPipe()) id: UUID) {
     return this.usersService.delete(id);
   }
 }

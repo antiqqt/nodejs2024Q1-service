@@ -51,9 +51,8 @@ describe('Refresh (e2e)', () => {
 
   beforeAll(async () => {
     if (shouldAuthorizationBeTested) {
-      const { accessToken, refreshToken, mockUserId, login, token } = await getTokenAndUserId(
-        request,
-      );
+      const { accessToken, refreshToken, mockUserId, login, token } =
+        await getTokenAndUserId(request);
       userTokens = { userId: mockUserId, login, accessToken, refreshToken };
       headers['Authorization'] = token;
     }

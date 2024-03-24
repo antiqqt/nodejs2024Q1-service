@@ -37,3 +37,6 @@ lerna-debug.log*
 # Docker volumes
 pgdata
 pglogs
+
+# Environment
+.env

@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @db.Uuid
+  name      String
+  login     String
+  password  String
+  version   Int
+  createdAt DateTime
+  updatedAt DateTime
+
+  UserFavoriteTracks  UserFavoriteTrack[]
+  UserFavoriteArtists UserFavoriteArtist[]
+  UserFavoriteAlbums  UserFavoriteAlbum[]
+}
+
+model Album {
+  id   String @id @db.Uuid
+  name String
+  year Int
+
+  artist            Artist?             @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  artistId          String?             @db.Uuid
+  tracks            Track[]
+  UserFavoriteAlbum UserFavoriteAlbum[]
+}
+
+model Artist {
+  id     String  @id @db.Uuid
+  name   String
+  grammy Boolean
+
+  albums             Album[]
+  tracks             Track[]
+  UserFavoriteArtist UserFavoriteArtist[]
+}
+
+model Track {
+  id       String @id @db.Uuid
+  name     String
+  duration Int
+
+  album             Album?              @relation(fields: [albumId], references: [id], onDelete: SetNull)
+  albumId           String?             @db.Uuid
+  artist            Artist?             @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  artistId          String?             @db.Uuid
+  UserFavoriteTrack UserFavoriteTrack[]
+}
+
+model UserFavoriteAlbum {
+  id String @id @db.Uuid
+
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String @db.Uuid
+  album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  albumId String @db.Uuid
+}
+
+model UserFavoriteArtist {
+  id String @id @db.Uuid
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.Uuid
+
+  artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  artistId String @db.Uuid
+}
+
+model UserFavoriteTrack {
+  id String @id @db.Uuid
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.Uuid
+
+  track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId String @db.Uuid
+}

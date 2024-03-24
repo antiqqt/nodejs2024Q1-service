@@ -22,33 +22,33 @@ export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
 
   @Get()
-  findAll() {
-    return this.albumsService.findAll();
+  async findAll() {
+    return await this.albumsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe()) id: UUID) {
-    return this.albumsService.findOne(id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: UUID) {
+    return await this.albumsService.findOne(id);
   }
 
   @Post()
   @UsePipes(new ZodValidationPipe(createAlbumSchema))
-  create(@Body() createAlbumDto: CreateAlbumDto) {
-    return this.albumsService.create(createAlbumDto);
+  async create(@Body() createAlbumDto: CreateAlbumDto) {
+    return await this.albumsService.create(createAlbumDto);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: UUID,
     @Body(new ZodValidationPipe(updateAlbumSchema))
     updateAlbumDto: UpdateAlbumDto,
   ) {
-    return this.albumsService.update(id, updateAlbumDto);
+    return await this.albumsService.update(id, updateAlbumDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id', new ParseUUIDPipe()) id: UUID) {
-    return this.albumsService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: UUID) {
+    return await this.albumsService.remove(id);
   }
 }

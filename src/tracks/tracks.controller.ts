@@ -23,32 +23,32 @@ export class TracksController {
 
   @Post()
   @UsePipes(new ZodValidationPipe(createTrackSchema))
-  create(@Body() createTrackDto: CreateTrackDto) {
-    return this.tracksService.create(createTrackDto);
+  async create(@Body() createTrackDto: CreateTrackDto) {
+    return await this.tracksService.create(createTrackDto);
   }
 
   @Get()
-  findAll() {
-    return this.tracksService.findAll();
+  async findAll() {
+    return await this.tracksService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe()) id: UUID) {
-    return this.tracksService.findOne(id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: UUID) {
+    return await this.tracksService.findOne(id);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: UUID,
     @Body(new ZodValidationPipe(updateTrackSchema))
     updateTrackDto: UpdateTrackDto,
   ) {
-    return this.tracksService.update(id, updateTrackDto);
+    return await this.tracksService.update(id, updateTrackDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id', new ParseUUIDPipe()) id: UUID) {
-    return this.tracksService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: UUID) {
+    return await this.tracksService.remove(id);
   }
 }

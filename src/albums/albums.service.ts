@@ -1,55 +1,49 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { UUID } from 'src/common/interfaces';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { Album } from './entities/album.entity';
-import { UUID } from 'src/common/interfaces';
-import { Database } from 'src/database/database.provider';
 
 @Injectable()
 export class AlbumsService {
-  constructor(private readonly db: Database) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
-    return this.db.albums;
+  async findAll() {
+    return await this.prisma.album.findMany();
   }
 
-  findOne(id: UUID) {
-    const album = this.db.albums.find((a) => a.id === id);
+  async findOne(id: UUID) {
+    const album = await this.prisma.album.findFirst({ where: { id } });
     if (!album) throw new NotFoundException('Album not found');
 
     return album;
   }
 
-  create(createAlbumDto: CreateAlbumDto) {
-    const album = new Album(createAlbumDto);
-
-    this.db.albums.push(album);
-    return album;
+  async create(createAlbumDto: CreateAlbumDto) {
+    return await this.prisma.album.create({ data: createAlbumDto });
   }
 
-  update(id: UUID, updateAlbumDto: UpdateAlbumDto) {
-    const album = this.db.albums.find((a) => a.id === id);
-    if (!album) throw new NotFoundException('Album not found');
-
-    const updatedAlbum = { ...album, ...updateAlbumDto };
-    this.db.albums = this.db.albums.map((a) => (a.id === id ? updatedAlbum : a));
-
-    return updatedAlbum;
+  async update(id: UUID, updateAlbumDto: UpdateAlbumDto) {
+    try {
+      return await this.prisma.album.update({ where: { id }, data: updateAlbumDto });
+    } catch {
+      throw new NotFoundException('Album not found');
+    }
   }
 
-  remove(id: UUID) {
-    const trackIndex = this.db.albums.findIndex((a) => a.id === id);
-    if (trackIndex < 0) throw new NotFoundException('Album not found');
-
-    const [deletedAlbum] = this.db.albums.splice(trackIndex, 1);
-    this.removeReferences(deletedAlbum.id);
+  async remove(id: UUID) {
+    try {
+      await this.prisma.album.delete({ where: { id } });
+    } catch (error) {
+      throw new NotFoundException('Album not found');
+    }
   }
 
-  private removeReferences(albumId: UUID) {
-    this.db.tracks = this.db.tracks.map((t) =>
-      t.albumId === albumId ? { ...t, albumId: null } : t,
-    );
+  // private removeReferences(albumId: UUID) {
+  //   this.db.tracks = this.db.tracks.map((t) =>
+  //     t.albumId === albumId ? { ...t, albumId: null } : t,
+  //   );
 
-    if (this.db.favorites.albums.has(albumId)) this.db.favorites.albums.delete(albumId);
-  }
+  //   if (this.db.favorites.albums.has(albumId)) this.db.favorites.albums.delete(albumId);
+  // }
 }

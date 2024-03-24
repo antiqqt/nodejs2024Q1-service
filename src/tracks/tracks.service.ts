@@ -1,46 +1,38 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { UUID } from 'src/common/interfaces';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
-import { UUID } from 'src/common/interfaces';
-import { Database } from 'src/database/database.provider';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TracksService {
-  constructor(private readonly db: Database) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
-    return this.db.tracks;
+  async findAll() {
+    return await this.prisma.track.findMany();
   }
 
-  findOne(id: UUID) {
-    const track = this.db.tracks.find((t) => t.id === id);
+  async findOne(id: UUID) {
+    const track = await this.prisma.track.findFirst({ where: { id } });
     if (!track) throw new NotFoundException('Track not found');
 
     return track;
   }
 
-  create(createTrackDto: CreateTrackDto) {
-    const track = new Track(createTrackDto);
-
-    this.db.tracks.push(track);
-    return track;
+  async create(createTrackDto: CreateTrackDto) {
+    return this.prisma.track.create({ data: new Track(createTrackDto) });
   }
 
-  update(id: UUID, updateTrackDto: UpdateTrackDto) {
-    const track = this.db.tracks.find((t) => t.id === id);
+  async update(id: UUID, updateTrackDto: UpdateTrackDto) {
+    const track = await this.prisma.track.findFirst({ where: { id } });
     if (!track) throw new NotFoundException('Track not found');
 
-    const updatedTrack = { ...track, ...updateTrackDto };
-    this.db.tracks = this.db.tracks.map((t) => (t.id === id ? updatedTrack : t));
-
-    return updatedTrack;
+    return await this.prisma.track.update({ where: { id }, data: updateTrackDto });
   }
 
-  remove(id: UUID) {
-    const trackIndex = this.db.tracks.findIndex((t) => t.id === id);
-    if (trackIndex < 0) throw new NotFoundException('Track not found');
-
-    this.db.tracks.splice(trackIndex, 1);
+  async remove(id: UUID) {
+    const deletedTrack = await this.prisma.track.delete({ where: { id } });
+    if (!deletedTrack) throw new NotFoundException('Track not found');
   }
 }

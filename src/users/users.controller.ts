@@ -22,32 +22,32 @@ import { UUID } from 'crypto';
 export class UsersController {
   constructor(private usersService: UsersService) {}
   @Get()
-  getAll() {
-    return this.usersService.findAll();
+  async getAll() {
+    return await this.usersService.findAll();
   }
 
   @Get(':id')
-  getById(@Param('id', new ParseUUIDPipe()) id: UUID) {
-    return this.usersService.findOne(id);
+  async getById(@Param('id', new ParseUUIDPipe()) id: UUID) {
+    return await this.usersService.findOne(id);
   }
 
   @Post()
   @UsePipes(new ZodValidationPipe(createUserSchema))
-  create(@Body() dto: CreateUserDto) {
-    return this.usersService.create(dto);
+  async create(@Body() dto: CreateUserDto) {
+    return await this.usersService.create(dto);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: UUID,
     @Body(new ZodValidationPipe(updatePasswordSchema)) dto: UpdatePasswordDto,
   ) {
-    return this.usersService.update(id, dto);
+    return await this.usersService.update(id, dto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  delete(@Param('id', new ParseUUIDPipe()) id: UUID) {
-    return this.usersService.delete(id);
+  async delete(@Param('id', new ParseUUIDPipe()) id: UUID) {
+    return await this.usersService.delete(id);
   }
 }

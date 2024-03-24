@@ -1,10 +1,9 @@
 import { randomUUID } from 'crypto';
 
-import { UUID } from 'src/common/interfaces';
 import { CreateUserDto } from '../dto/create-user.dto';
 
 export class User {
-  readonly id: UUID;
+  readonly id: string;
   login: string;
   password: string;
   version: number; // integer number, increments on update

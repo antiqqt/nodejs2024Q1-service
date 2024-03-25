@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -18,72 +19,39 @@ model User {
   login     String
   password  String
   version   Int    @default(1)
-  createdAt Int
-  updatedAt Int
-
-  UserFavoriteTracks  UserFavoriteTrack[]
-  UserFavoriteArtists UserFavoriteArtist[]
-  UserFavoriteAlbums  UserFavoriteAlbum[]
+  createdAt Float
+  updatedAt Float
 }
 
 model Album {
-  id   String @id @default(uuid()) @db.Uuid
-  name String
-  year Int
+  id         String  @id @default(uuid()) @db.Uuid
+  name       String
+  year       Int
+  isFavorite Boolean @default(false)
 
-  artist            Artist?             @relation(fields: [artistId], references: [id], onDelete: SetNull)
-  artistId          String?             @db.Uuid
-  tracks            Track[]
-  UserFavoriteAlbum UserFavoriteAlbum[]
+  artist   Artist? @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  artistId String? @db.Uuid
+  tracks   Track[]
 }
 
 model Artist {
-  id     String  @id @default(uuid()) @db.Uuid
-  name   String
-  grammy Boolean
+  id         String  @id @default(uuid()) @db.Uuid
+  name       String
+  grammy     Boolean
+  isFavorite Boolean @default(false)
 
-  albums             Album[]
-  tracks             Track[]
-  UserFavoriteArtist UserFavoriteArtist[]
+  albums Album[]
+  tracks Track[]
 }
 
 model Track {
-  id       String @id @default(uuid()) @db.Uuid
-  name     String
-  duration Int
+  id         String  @id @default(uuid()) @db.Uuid
+  name       String
+  duration   Int
+  isFavorite Boolean @default(false)
 
-  album             Album?              @relation(fields: [albumId], references: [id], onDelete: SetNull)
-  albumId           String?             @db.Uuid
-  artist            Artist?             @relation(fields: [artistId], references: [id], onDelete: SetNull)
-  artistId          String?             @db.Uuid
-  UserFavoriteTrack UserFavoriteTrack[]
-}
-
-model UserFavoriteAlbum {
-  id String @id @default(uuid()) @db.Uuid
-
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId  String @db.Uuid
-  album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
-  albumId String @db.Uuid
-}
-
-model UserFavoriteArtist {
-  id String @id @default(uuid()) @db.Uuid
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @db.Uuid
-
-  artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
-  artistId String @db.Uuid
-}
-
-model UserFavoriteTrack {
-  id String @id @default(uuid()) @db.Uuid
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @db.Uuid
-
-  track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
-  trackId String @db.Uuid
+  album    Album?  @relation(fields: [albumId], references: [id], onDelete: SetNull)
+  albumId  String? @db.Uuid
+  artist   Artist? @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  artistId String? @db.Uuid
 }

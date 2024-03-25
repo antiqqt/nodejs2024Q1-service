@@ -37,19 +37,10 @@ export class ArtistsService {
   }
 
   async remove(id: UUID) {
-    const deletedArtist = await this.prisma.artist.delete({ where: { id } });
-    if (!deletedArtist) throw new NotFoundException('Artist not found');
+    try {
+      await this.prisma.artist.delete({ where: { id } });
+    } catch (error) {
+      throw new NotFoundException('Artist not found');
+    }
   }
-
-  // private removeReferences(artistId: UUID) {
-  //   this.db.tracks = this.db.tracks.map((t) =>
-  //     t.artistId === artistId ? { ...t, artistId: null } : t,
-  //   );
-
-  //   this.db.albums = this.db.albums.map((a) =>
-  //     a.artistId === artistId ? { ...a, artistId: null } : a,
-  //   );
-
-  //   if (this.db.favorites.artists.has(artistId)) this.db.favorites.artists.delete(artistId);
-  // }
 }

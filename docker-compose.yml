@@ -6,7 +6,7 @@ services:
     restart: always
     env_file:
       - .env
-    container_name: postgres
+    container_name: ${POSTGRES_CONTAINER_NAME}
     volumes:
       - ./pgdata:/var/lib/postgresql/data
       - ./pglogs:/logs

@@ -32,7 +32,10 @@ export class TracksService {
   }
 
   async remove(id: UUID) {
-    const deletedTrack = await this.prisma.track.delete({ where: { id } });
-    if (!deletedTrack) throw new NotFoundException('Track not found');
+    try {
+      await this.prisma.track.delete({ where: { id } });
+    } catch (error) {
+      throw new NotFoundException('Track not found');
+    }
   }
 }
